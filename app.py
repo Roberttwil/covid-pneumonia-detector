@@ -1,6 +1,6 @@
 import streamlit as st
-from tensorflow.keras.models import load_model
-from tensorflow.keras.preprocessing.image import img_to_array
+from keras.models import load_model  # <-- UBAH INI
+from keras.utils import img_to_array  # <-- UBAH INI (dari keras.utils)
 import numpy as np
 from PIL import Image
 from reportlab.lib.pagesizes import letter
@@ -9,30 +9,35 @@ from reportlab.lib.utils import ImageReader
 import io
 import zipfile
 
-# Fungsi untuk memuat model
+# Fungsi untuk memuat model BARU Anda
 @st.cache_resource
-def load_inception_model():
-    model = load_model('inceptionV3-F1-Last.keras')
+def load_our_model(): # <-- UBAH INI (nama fungsi)
+    # Pastikan nama file ini SAMA PERSIS dengan model baru yang Anda latih
+    model = load_model('efficientnetv2s_best_model.keras') # <-- UBAH INI (nama file)
     return model
 
-model = load_inception_model()
+model = load_our_model() # <-- UBAH INI
 
 # Fungsi untuk klasifikasi gambar
 def classify_image(image, model):
     # Ubah ukuran gambar sesuai dengan input model
     img = image.resize((224, 224))
-    img = img_to_array(img) / 255.0  # Normalisasi
+    
+    # UBAH INI: Hapus normalisasi / 255.0
+    # Model EfficientNetV2S yang kita buat di Colab menangani normalisasi secara internal.
+    img = img_to_array(img) 
+    
     img = np.expand_dims(img, axis=0)  # Tambahkan batch dimension
 
     # Prediksi dengan model
     pred = model.predict(img)
     class_idx = np.argmax(pred, axis=1)[0]
-    categories = ['COVID', 'NORMAL', 'PNEUMONIA']
+    categories = ['COVID', 'NORMAL', 'PNEUMONIA'] # <-- Ini sudah benar untuk dataset Anda
     label = categories[class_idx]
     confidence = np.max(pred)
     return label, confidence
 
-# Fungsi untuk membuat PDF dengan gambar
+# Fungsi untuk membuat PDF dengan gambar (Tidak ada perubahan)
 def create_pdf_with_images(results):
     buffer = io.BytesIO()
     c = canvas.Canvas(buffer, pagesize=letter)
@@ -68,7 +73,7 @@ def create_pdf_with_images(results):
     buffer.seek(0)
     return buffer
 
-# Fungsi untuk memproses file ZIP
+# Fungsi untuk memproses file ZIP (Tidak ada perubahan)
 def process_zip_file(zip_file):
     results = []
     with zipfile.ZipFile(zip_file) as z:
@@ -80,7 +85,7 @@ def process_zip_file(zip_file):
                     results.append((file_name, label, confidence, image))
     return results
 
-# Navigasi sidebar
+# Navigasi sidebar (Tidak ada perubahan)
 menu = ["Beranda", "Klasifikasi", "Tentang"]
 choice = st.sidebar.selectbox("Navigasi", menu)
 
@@ -89,13 +94,13 @@ if choice == "Beranda":
     st.markdown("""
     <h1 style="text-align: center;">ALus</h1>
     <h2 style="text-align: center;">Artificial Lungs Disease Detection</h2>
-    <p style="text-align: center;">Aplikasi klasifikasi gambar paru-paru berdasarkan model InceptionV3.</p>
-    """, unsafe_allow_html=True)
+    <p style="text-align: center;">Aplikasi klasifikasi gambar paru-paru berdasarkan model Deep Learning.</p> 
+    """, unsafe_allow_html=True) # <-- UBAH INI (deskripsi)
 
     # Menampilkan gambar di bawah deskripsi
-    st.image("Lung.jpg", use_column_width=True)
+    st.image("Lung.jpg", use_column_width=True) # Pastikan Anda punya file "Lung.jpg"
 
-    # Teks justify
+    # Teks justify (Tidak ada perubahan)
     st.markdown("""
     <p style="text-align: justify; font-size: 18px;">
         Kesehatan paru-paru sangat penting untuk kualitas hidup yang optimal. Penyakit paru seperti pneumonia dan infeksi akibat COVID-19 dapat
@@ -114,6 +119,7 @@ if choice == "Beranda":
     """, unsafe_allow_html=True)
 
 elif choice == "Klasifikasi":
+    # (Tidak ada perubahan di bagian ini)
     st.title("Klasifikasi Gambar Paru-Paru")
     option = st.radio("Pilih metode unggah:", ["Unggah beberapa gambar", "Unggah file ZIP"])
 
@@ -144,7 +150,7 @@ elif choice == "Klasifikasi":
                 st.image(image, caption=f"Gambar: {file_name}", use_column_width=True)
                 st.write(f"**{file_name}**: {label} ({confidence * 100:.2f}%)")
 
-    # Menambahkan tombol untuk mengunduh PDF hasil
+    # Menambahkan tombol untuk mengunduh PDF hasil (Tidak ada perubahan)
     if results:
         pdf_buffer = create_pdf_with_images(results)
         st.download_button(
@@ -156,9 +162,9 @@ elif choice == "Klasifikasi":
 
 elif choice == "Tentang":
     st.title("Tentang Aplikasi")
-    st.write("Aplikasi ini menggunakan model deep learning (InceptionV3) untuk mengklasifikasikan gambar X-ray paru-paru menjadi tiga kategori: COVID, Pneumonia, dan Normal.")
+    st.write("Aplikasi ini menggunakan model deep learning (EfficientNetV2-S) untuk mengklasifikasikan gambar X-ray paru-paru menjadi tiga kategori: COVID, Pneumonia, dan Normal.") # <-- UBAH INI
     st.write("### Fitur Utama:")
     st.markdown("- **Klasifikasi gambar individu**: Unggah satu atau beberapa gambar X-ray untuk klasifikasi.")
     st.markdown("- **Klasifikasi file ZIP**: Unggah file ZIP berisi banyak gambar untuk klasifikasi.")
     st.markdown("- **Unduh hasil dalam PDF**: Hasil klasifikasi gambar dapat diunduh dalam bentuk PDF.")
-    st.markdown("- **Deep Learning Model**: Menggunakan model InceptionV3 yang sudah dilatih.")
+    st.markdown("- **Deep Learning Model**: Menggunakan model EfficientNetV2-S yang sudah dilatih.") # <-- UBAH INI
