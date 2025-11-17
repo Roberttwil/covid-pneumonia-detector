@@ -9,4 +9,4 @@ scipy==1.13.1
 seaborn==0.13.2
 flask==3.0.3
 requests==2.32.3
-ini req.txt yg lama
+
