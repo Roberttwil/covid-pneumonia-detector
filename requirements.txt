@@ -1,7 +1,12 @@
-streamlit
-tensorflow==2.13.0  # Versi ini masih bundling dengan Keras 2
-Pillow
-numpy<1.24 # Numpy baru sering bermasalah dengan TF lama
-scikit-learn
-scipy
-seaborn
+﻿pip==23.0
+tensorflow==2.13.0
+streamlit==1.35.0
+Pillow==10.3.0
+reportlab==4.2.5
+numpy==1.24
+scikit-learn==1.5.0
+scipy==1.13.1
+seaborn==0.13.2
+flask==3.0.3
+requests==2.32.3
+ini req.txt yg lama
